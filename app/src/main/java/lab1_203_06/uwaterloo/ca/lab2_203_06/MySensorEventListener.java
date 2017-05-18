@@ -6,6 +6,7 @@ import android.hardware.SensorEventListener;
 import android.util.Log;
 import android.widget.TextView;
 
+import java.util.Timer;
 import java.util.Vector;
 
 import ca.uwaterloo.sensortoy.LineGraphView;
@@ -19,11 +20,12 @@ public class MySensorEventListener implements SensorEventListener{
     Vector<float[]> accelData;
     TextView output, dirLbl;
     float[] smoothValues;
-    float alpha = 0.30f;
+    float alpha = 0.15f;
     Vector<Float> x= new Vector<>();
     Vector<Float> y= new Vector<>();
     Vector<Float> z= new Vector<>();
     String direction = "NONE";
+    final float HOLD = alpha*50;
 
 
 
@@ -53,6 +55,7 @@ public class MySensorEventListener implements SensorEventListener{
 
     public void onSensorChanged(SensorEvent se) {
         if (se.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
+
             if(getGesture()!=""){
                 direction=getGesture();
             }
@@ -67,9 +70,18 @@ public class MySensorEventListener implements SensorEventListener{
             smoothValues=accelData.elementAt(0);
             graph.addPoint(se.values);
             smoothGraph.addPoint(lowPass(se.values,smoothValues));
+//            cleanup(x);
+//            cleanup(y);
+//            cleanup(z);
+//            cleanup(accelData);
 
         }
 
+    }
+    private void cleanup(Vector v){
+        if(v.size()>100){
+            v.subList(100,v.size()).clear();
+        }
     }
     private float avg(Vector<Float> axisValues, int start, int length){
         Log.d("Check", "Check");
@@ -86,26 +98,24 @@ public class MySensorEventListener implements SensorEventListener{
     }
 
     public String getGesture(){
-        System.out.println("Hello");
         if(x.size()>15){
 
             float[] axisDis = new float[3];
-            System.out.println("Hello");
 
             axisDis[0] = avg(x, x.size() - 6, 5);
             axisDis[1] = avg(y, y.size() - 6, 5);
             axisDis[2] = avg(z, z.size() - 6, 5);
 
-            if(axisDis[0]<=-8){
+            if(axisDis[0]<=(-1*HOLD)){
                 return "RIGHT";
             }
-            if(axisDis[0]>=8){
+            if(axisDis[0]>=HOLD){
                 return "LEFT";
             }
-            if(axisDis[1]<=-8||axisDis[2]<=-8){
+            if(axisDis[1]<=(-1*HOLD)||axisDis[2]<=(-1*HOLD)){
                 return "UP";
             }
-            if(axisDis[1]>=8||axisDis[2]>=8){
+            if(axisDis[1]>=HOLD||axisDis[2]>=HOLD){
                 return "DOWN";
             }
 

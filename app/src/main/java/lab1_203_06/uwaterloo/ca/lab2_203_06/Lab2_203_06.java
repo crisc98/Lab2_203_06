@@ -38,6 +38,7 @@ public class Lab2_203_06 extends AppCompatActivity {
         graph.setVisibility(View.VISIBLE);
 
         TextView dirLbl = makeLabel(ll, "");
+        dirLbl.setTextSize(32);
 
         smoothGraph = new LineGraphView( getApplicationContext(), 100, Arrays.asList("x", "y", "z"));
         ll.addView(smoothGraph);
