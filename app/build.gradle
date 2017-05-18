@@ -4,7 +4,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
-        applicationId "lab1_203_06.uwaterloo.ca.lab1_203_06"
+        applicationId "lab1_203_06.uwaterloo.ca.lab2_203_06"
         minSdkVersion 9
         targetSdkVersion 25
         versionCode 1
