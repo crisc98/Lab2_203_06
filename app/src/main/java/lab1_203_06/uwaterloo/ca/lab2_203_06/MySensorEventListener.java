@@ -109,13 +109,13 @@ public class MySensorEventListener implements SensorEventListener{
             if(axisDis[0]<=(-1*HOLD)){
                 return "RIGHT";
             }
-            if(axisDis[0]>=HOLD){
+            else if(axisDis[0]>=HOLD){
                 return "LEFT";
             }
-            if(axisDis[1]<=(-1*HOLD)||axisDis[2]<=(-1*HOLD)){
+            else if(axisDis[1]<=(-1*HOLD)||axisDis[2]<=(-1*HOLD)){
                 return "UP";
             }
-            if(axisDis[1]>=HOLD||axisDis[2]>=HOLD){
+            else if(axisDis[1]>=HOLD||axisDis[2]>=HOLD){
                 return "DOWN";
             }
 
