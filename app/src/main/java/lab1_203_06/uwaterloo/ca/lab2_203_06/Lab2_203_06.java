@@ -39,6 +39,7 @@ public class Lab2_203_06 extends AppCompatActivity {
 
         TextView dirLbl = makeLabel(ll, "");
         dirLbl.setTextSize(32);
+        dirLbl.setTextColor(Color.RED);
 
         smoothGraph = new LineGraphView( getApplicationContext(), 100, Arrays.asList("x", "y", "z"));
         ll.addView(smoothGraph);

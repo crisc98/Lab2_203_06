@@ -7,6 +7,7 @@ import android.util.Log;
 import android.widget.TextView;
 
 import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 
 import ca.uwaterloo.sensortoy.LineGraphView;
@@ -25,6 +26,8 @@ public class MySensorEventListener implements SensorEventListener{
     Vector<Float> y= new Vector<>();
     Vector<Float> z= new Vector<>();
     String direction = "NONE";
+    boolean peaked =false;
+    Timer timer = new Timer();
     final float HOLD = alpha*50;
 
 
@@ -56,7 +59,7 @@ public class MySensorEventListener implements SensorEventListener{
     public void onSensorChanged(SensorEvent se) {
         if (se.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
 
-            if(getGesture()!=""){
+            if(getAgitated()&&!peaked){
                 direction=getGesture();
             }
             dirLbl.setText(direction);
@@ -107,20 +110,52 @@ public class MySensorEventListener implements SensorEventListener{
             axisDis[2] = avg(z, z.size() - 6, 5);
 
             if(axisDis[0]<=(-1*HOLD)){
-                return "RIGHT";
-            }
-            else if(axisDis[0]>=HOLD){
+                peak();
                 return "LEFT";
             }
+            else if(axisDis[0]>=HOLD){
+                peak();
+                return "RIGHT";
+            }
             else if(axisDis[1]<=(-1*HOLD)||axisDis[2]<=(-1*HOLD)){
-                return "UP";
+                peak();
+                return "DOWN";
             }
             else if(axisDis[1]>=HOLD||axisDis[2]>=HOLD){
-                return "DOWN";
+                peak();
+                return "UP";
             }
 
         }
         return "";
+    }
+
+    private boolean getAgitated(){
+        if(x.size()>15){
+
+            float[] axisDis = new float[3];
+
+            axisDis[0] = avg(x, x.size() - 6, 5);
+            axisDis[1] = avg(y, y.size() - 6, 5);
+            axisDis[2] = avg(z, z.size() - 6, 5);
+
+            if(axisDis[0]<=(-1*HOLD)||axisDis[0]>=HOLD||axisDis[1]<=(-1*HOLD)||axisDis[2]<=(-1*HOLD)||axisDis[1]>=HOLD||axisDis[2]>=HOLD) {
+                return true;
+            }
+
+         }
+        return false;
+    }
+    private void peak(){
+        peaked=true;
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                peaked=false;
+                this.cancel();
+
+            }
+        },500);
     }
 }
 
