@@ -12,11 +12,8 @@ import java.util.Vector;
 
 import ca.uwaterloo.sensortoy.LineGraphView;
 
-/**
- * Created by Cristiano Chelotti on 5/18/2017.
- */
-
 public class MySensorEventListener implements SensorEventListener{
+    //Declares class-wide fields
     LineGraphView graph, smoothGraph;
     Vector<float[]> accelData;
     TextView output, dirLbl;
@@ -28,10 +25,12 @@ public class MySensorEventListener implements SensorEventListener{
     String direction = "NONE";
     boolean peaked =false;
     Timer timer = new Timer();
+
+    //Threshold constant
     final float HOLD = alpha*50;
 
-
-
+    //Constructor for MySensorEventListener: Takes a  current data TextView, a Vector, two LineGraphViews, and and a direction label text view.
+    //Assigns the parameters to their respective class-wide fields
     public MySensorEventListener(TextView outputView, Vector data, LineGraphView graph, LineGraphView smooth, TextView dirLbl) {
         output = outputView;
         accelData = data;
@@ -44,7 +43,7 @@ public class MySensorEventListener implements SensorEventListener{
 
     }
 
-
+    //Method that applies low pass filter to an array of data inputs and stores them in an array of data outputs
     public float[] lowPass(float[] input, float[] output){
         if (output == null) {
             return input;
@@ -55,7 +54,7 @@ public class MySensorEventListener implements SensorEventListener{
         return output;
     }
 
-
+    //Actions to be executed every time the sensor detects a new data point
     public void onSensorChanged(SensorEvent se) {
         if (se.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
 
@@ -73,19 +72,12 @@ public class MySensorEventListener implements SensorEventListener{
             smoothValues=accelData.elementAt(0);
             graph.addPoint(se.values);
             smoothGraph.addPoint(lowPass(se.values,smoothValues));
-//            cleanup(x);
-//            cleanup(y);
-//            cleanup(z);
-//            cleanup(accelData);
 
         }
 
     }
-    private void cleanup(Vector v){
-        if(v.size()>100){
-            v.subList(100,v.size()).clear();
-        }
-    }
+
+    //A method that returns the average of the values in a float vector from a starting index to a certain length after
     private float avg(Vector<Float> axisValues, int start, int length){
         Log.d("Check", "Check");
 
@@ -100,6 +92,8 @@ public class MySensorEventListener implements SensorEventListener{
         return sum/length;
     }
 
+    //A method that returns which Gesture the device was subjected to based on the averages of the accelerometer data.
+    //Returns a specific direction when the average accel data on that axis exceeds the threshold constant
     public String getGesture(){
         if(x.size()>15){
 
@@ -130,6 +124,7 @@ public class MySensorEventListener implements SensorEventListener{
         return "";
     }
 
+    //A method that returns whether or not the device has been agitated or the threshold has been passed on some axis
     private boolean getAgitated(){
         if(x.size()>15){
 
@@ -146,6 +141,8 @@ public class MySensorEventListener implements SensorEventListener{
          }
         return false;
     }
+
+    //A method that sets the state of the gesture to peaked for .5 seconds and then sets returns to a listening state
     private void peak(){
         peaked=true;
         timer.schedule(new TimerTask() {

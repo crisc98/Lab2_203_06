@@ -1,13 +1,10 @@
 package lab1_203_06.uwaterloo.ca.lab2_203_06;
 
-import android.graphics.Color;
 import android.hardware.Sensor;
-import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -23,6 +20,8 @@ import java.util.Vector;
 import ca.uwaterloo.sensortoy.LineGraphView;
 
 public class Lab2_203_06 extends AppCompatActivity {
+
+    //Declaring class-wide fields
     LineGraphView graph, smoothGraph;
     SensorEventListener accel;
     Vector<float[]> accelData = new Vector<>();
@@ -31,21 +30,25 @@ public class Lab2_203_06 extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lab2_203_06);
+
+        //Declares and initializes the linear layout used in the application
         LinearLayout ll = (LinearLayout) findViewById(R.id.activity_lab2_203_06);
 
+        //Initializes the accelerometer graph for the raw readings
         graph = new LineGraphView(getApplicationContext(), 100, Arrays.asList("x", "y", "z"));
         ll.addView(graph);
         graph.setVisibility(View.VISIBLE);
 
+        //Initializes a blank label to display the direction of the gesture
         TextView dirLbl = makeLabel(ll, "");
         dirLbl.setTextSize(32);
-        dirLbl.setTextColor(Color.RED);
 
+        //Initializes an accelerometer graph for the filtered readings
         smoothGraph = new LineGraphView( getApplicationContext(), 100, Arrays.asList("x", "y", "z"));
         ll.addView(smoothGraph);
         smoothGraph.setVisibility(View.VISIBLE);
 
-
+        //Creates and initializes a save button that will be used to generate the csv for the filtered readings
         Button saveBtn = (Button) findViewById(R.id.saveBtn);
         saveBtn.setText("Generate CSV Record for Acc. Sen.");
         saveBtn.setOnClickListener(new View.OnClickListener() {
@@ -58,7 +61,10 @@ public class Lab2_203_06 extends AppCompatActivity {
 
         //ACCEL
 
+        //Creates a label that indicates the current accelerometer reading
         makeLabel(ll, "The Accelerometer Reading is: ");
+
+        //Registers and assigns listeners and managers to the linear accelerometer
         SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         TextView accelSensorLbl = makeLabel(ll, "");
         Sensor accelSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
@@ -67,6 +73,7 @@ public class Lab2_203_06 extends AppCompatActivity {
 
     }
 
+    //A method that creates a label with specific text and adds it to a specified layout
     private TextView makeLabel(LinearLayout l, String text) {
         TextView tv1 = new TextView(getApplicationContext());
         tv1.setText(text);
@@ -74,10 +81,12 @@ public class Lab2_203_06 extends AppCompatActivity {
         return tv1;
     }
 
+
+    //A method that generates a CSV with the accelerometer data (last 100). Creates a new file if necessary. Overwrites otherwise
     private void genCSV() {
         if (!accelData.isEmpty()) {
             try {
-                File file = new File("/storage/extSdCard/Android/data/lab1_203_06.uwaterloo.ca.lab1_203_06/files/Lab2_203_06", "accelReadings.csv");
+                File file = new File("/storage/extSdCard/Android/data/lab1_203_06.uwaterloo.ca.lab1_203_06/files/Lab2_203_06", "lab_2_readings.csv");
                 System.out.println(file.getAbsolutePath());
                 if (file.createNewFile()) {
                     System.out.println("File is created!");
@@ -106,3 +115,6 @@ public class Lab2_203_06 extends AppCompatActivity {
 
 
 }
+
+
+
